@@ -40,7 +40,7 @@
 </div>
 
 <script>
-    // FINAL LIST: Based on your GitHub assets folder
+    // List of names (Matches your .png files in the assets folder)
     const pokemon = [
         "Aleo", "Alewo", "Aloe", "Bewo", "Firarmear", "Flamer", 
         "Flear", "Flicket", "Foimer", "Gider", "Gimox", "Giper", 
@@ -50,9 +50,13 @@
     const slider = document.getElementById('slider');
     const counter = document.getElementById('dex-count');
 
+    // Generate pages dynamically
     pokemon.forEach((name, index) => {
         const page = document.createElement('div');
         page.className = 'page';
+
+        // Every name now uses the .png extension
+        let fileName = name + ".png";
 
         page.innerHTML = `
             <img src="assets/${fileName}" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">
@@ -60,7 +64,7 @@
                 NO. ${String(index + 1).padStart(3, '0')}<br>
                 ${name}<br>
                 ---<br>
-                AREA: (Universe: NULL)
+                AREA: (UNIVERSE: NULL)
             </div>
         `;
         slider.appendChild(page);
@@ -76,6 +80,8 @@
         pos = (pos + dir + pokemon.length) % pokemon.length;
         updateDisplay();
     }
+    
+    // Set initial view
     updateDisplay();
 </script>
 
