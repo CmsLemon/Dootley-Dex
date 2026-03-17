@@ -8,6 +8,217 @@
     <style>
         :root {
             --dex-red: #dc0a2d;
+            --screen-black: #121212;
+            --matrix-green: #00ff41;
+        }
+
+        body { 
+            background-color: #000; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            font-family: 'Press Start 2P', cursive; 
+            overflow: hidden; 
+        }
+
+        /* The Red Outline Pokedex Body */
+        .pokedex-frame {
+            width: 95vw;
+            max-width: 420px;
+            height: 95vh;
+            border: 12px solid var(--dex-red); /* The thick red outline */
+            background-color: #000;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: 0 0 20px rgba(220, 10, 45, 0.3);
+        }
+
+        /* Top Bar with Lens and Buttons */
+        .header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(220, 10, 45, 0.1);
+        }
+
+        .lens {
+            width: 35px;
+            height: 35px;
+            background: radial-gradient(circle, #fff, #00d4ff);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00d4ff;
+        }
+
+        .btn-group { display: flex; gap: 10px; }
+
+        .btn {
+            background: var(--dex-red);
+            color: #fff;
+            border: 3px solid #000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 4px #8b0000;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #8b0000;
+        }
+
+        /* The Main Screen Area */
+        .screen {
+            flex-grow: 1;
+            margin: 10px;
+            background-color: var(--screen-black);
+            border: 4px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .viewport {
+            flex: 3;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pages-wrapper {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .page {
+            min-width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* BUG FIX: This keeps the Pokemon from going off-screen */
+        .page img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Shrinks the image to fit without breaking layout */
+            image-rendering: pixelated;
+        }
+
+        /* Bottom Info Strip */
+        .info-bar {
+            flex: 1;
+            background: #000;
+            border-top: 4px solid #333;
+            padding: 15px;
+            color: var(--matrix-green);
+            font-size: 9px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .footer {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .counter {
+            display: inline-block;
+            color: var(--matrix-green);
+            border: 2px solid var(--matrix-green);
+            padding: 5px 15px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="pokedex-frame">
+    <div class="header">
+        <div class="lens"></div>
+        <div class="btn-group">
+            <button class="btn" onclick="move(-1)">PREV</button>
+            <button class="btn" onclick="move(1)">NEXT</button>
+        </div>
+    </div>
+
+    <div class="screen">
+        <div class="viewport">
+            <div id="slider" class="pages-wrapper"></div>
+        </div>
+        
+        <div class="info-bar" id="info-panel">
+            INITIALIZING...
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="counter" id="dex-count">01 / 15</div>
+    </div>
+</div>
+
+<script>
+    const pokemon = [
+        "Aleo", "Alewo", "Aloe", "Bewo", "Firarmear", "Flamer", 
+        "Flear", "Flicket", "Foimer", "Gider", "Gimox", "Giper", 
+        "Groxim", "Hydropip", "jelico"
+    ];
+
+    const slider = document.getElementById('slider');
+    const counter = document.getElementById('dex-count');
+    const infoPanel = document.getElementById('info-panel');
+
+    pokemon.forEach((name, index) => {
+        const page = document.createElement('div');
+        page.className = 'page';
+        page.innerHTML = `<img src="assets/${name}.png" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">`;
+        slider.appendChild(page);
+    });
+
+    let pos = 0;
+
+    function updateDisplay() {
+        slider.style.transform = `translateX(-${pos * 100}%)`;
+        counter.innerText = `${String(pos + 1).padStart(2, '0')} / ${pokemon.length}`;
+        
+        infoPanel.innerHTML = `
+            IDENTIFIED: ${pokemon[pos].toUpperCase()}<br>
+            STATUS: (UNIVERSE: NULL)<br>
+            LOCATION: PICTURE ROCKS, AZ
+        `;
+    }
+
+    function move(dir) {
+        pos = (pos + dir + pokemon.length) % pokemon.length;
+        updateDisplay();
+    }
+
+    updateDisplay();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dootley Dex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dex-red: #dc0a2d;
             --dex-dark: #8b0000;
             --screen-bg: #222; /* Darker screen for better contrast */
         }
@@ -144,10 +355,10 @@
 </div>
 
 <script>
-    const pokemon = [
-        "Aleo", "Alewo", "Aloe", "Bewo", "Firarmear", "Flamer", 
-        "Flear", "Flicket", "Foimer", "Gider", "Gimox", "Giper", 
-        "Groxim", "Hydropip", "jelico"
+      const pokemon = [
+        "Groxim", "Gimox", "Foimer", "Giper", "Gider", "Hydropip", 
+        "Flear", "Flamer", "Firarmear", "Bewo", "Flicket", "Aleo", 
+        "Aloe", "Alewo", "jelico"
     ];
 
     const slider = document.getElementById('slider');
