@@ -53,9 +53,6 @@
     pokemon.forEach((name, index) => {
         const page = document.createElement('div');
         page.className = 'page';
-        
-        // Handle specific extensions from your list (Gimox ends in .pn)
-        let fileName = (name === "Gimox") ? "Gimox.pn" : name + ".png";
 
         page.innerHTML = `
             <img src="assets/${fileName}" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">
