@@ -2,6 +2,190 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dootley-Dex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dex-red: #dc0a2d;
+            --dex-dark: #8b0000;
+            --screen-bg: #222; /* Darker screen for better contrast */
+        }
+
+        body { 
+            background-color: #111; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            font-family: 'Press Start 2P', cursive; 
+            overflow: hidden; 
+        }
+
+        /* The Main Pokedex Body (The Thick Red Border) */
+        .pokedex-body {
+            width: 92%;
+            max-width: 400px;
+            height: 90vh;
+            background-color: var(--dex-red);
+            border: 8px solid #000;
+            border-radius: 20px 20px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: inset -10px -10px 0px var(--dex-dark);
+            position: relative;
+        }
+
+        /* The Decorative Blue Light */
+        .camera-lens {
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, #fff, #00d4ff);
+            border: 4px solid white;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px #00d4ff;
+        }
+
+        /* The Screen Viewport (Fixed Centering) */
+        .viewport { 
+            flex-grow: 1;
+            background-color: var(--screen-bg);
+            border: 6px solid #444;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+        }
+
+        .pages-wrapper { 
+            display: flex; 
+            height: 100%; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        .page { 
+            min-width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; /* Keeps content vertically centered */
+            padding: 15px; 
+            box-sizing: border-box; 
+            color: #0f0; /* Retro Matrix Green */
+        }
+
+        .page img { 
+            max-width: 80%; 
+            max-height: 55%; /* Prevents image from pushing text off screen */
+            image-rendering: pixelated; 
+            margin-bottom: 20px;
+        }
+
+        .info-text { 
+            font-size: 10px; 
+            line-height: 1.6; 
+            text-align: center; 
+            text-transform: uppercase;
+        }
+
+        /* Physical-style Buttons */
+        .controls {
+            height: 120px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .btn {
+            background: #333;
+            color: #fff;
+            border: 4px solid #000;
+            padding: 15px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            border-radius: 8px;
+            box-shadow: 0 5px #000;
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px #000;
+        }
+
+        .counter {
+            font-size: 10px;
+            color: #fff;
+            background: #000;
+            padding: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="pokedex-body">
+    <div class="camera-lens"></div>
+
+    <div class="viewport">
+        <div id="slider" class="pages-wrapper"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="move(-1)">PREV</button>
+        <div class="counter" id="dex-count">01 / 15</div>
+        <button class="btn" onclick="move(1)">NEXT</button>
+    </div>
+</div>
+
+<script>
+    const pokemon = [
+        "Aleo", "Alewo", "Aloe", "Bewo", "Firarmear", "Flamer", 
+        "Flear", "Flicket", "Foimer", "Gider", "Gimox", "Giper", 
+        "Groxim", "Hydropip", "jelico"
+    ];
+
+    const slider = document.getElementById('slider');
+    const counter = document.getElementById('dex-count');
+
+    pokemon.forEach((name, index) => {
+        const page = document.createElement('div');
+        page.className = 'page';
+        page.innerHTML = `
+            <img src="assets/${name}.png" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">
+            <div class="info-text">
+                NO. ${String(index + 1).padStart(3, '0')}<br>
+                ${name}<br>
+                ---<br>
+                (UNIVERSE: NULL)
+            </div>
+        `;
+        slider.appendChild(page);
+    });
+
+    let pos = 0;
+    function updateDisplay() {
+        slider.style.transform = `translateX(-${pos * 100}%)`;
+        counter.innerText = `${String(pos + 1).padStart(2, '0')} / ${pokemon.length}`;
+    }
+
+    function move(dir) {
+        pos = (pos + dir + pokemon.length) % pokemon.length;
+        updateDisplay();
+    }
+    updateDisplay();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dootley-Dex</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -105,7 +289,7 @@
 </div>
 
 <script>
-       const pokemon = [
+         const pokemon = [
         "Groxim", "Gimox", "Foimer", "Giper", "Gider", "Hydropip", 
         "Flear", "Flamer", "Firarmear", "Bewo", "Flicket", "Aleo", 
         "Aloe", "Alewo", "jelico"
