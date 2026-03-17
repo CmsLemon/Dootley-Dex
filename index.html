@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dootley-Dex</title>
+    <title>Dootley-Dex Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
             --dex-red: #dc0a2d;
-            --screen-black: #121212;
+            --screen-black: #0a0a0a;
             --matrix-green: #00ff41;
         }
 
@@ -23,335 +23,135 @@
             overflow: hidden; 
         }
 
-        /* The Red Outline Pokedex Body */
-        .pokedex-frame {
+        /* The Red Plastic Shell */
+        .pokedex-shell {
             width: 95vw;
             max-width: 420px;
             height: 95vh;
-            border: 12px solid var(--dex-red); /* The thick red outline */
-            background-color: #000;
-            border-radius: 25px;
+            background-color: var(--dex-red);
+            border: 8px solid #000;
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
-            position: relative;
-            box-shadow: 0 0 20px rgba(220, 10, 45, 0.3);
+            padding: 15px;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.5);
         }
 
-        /* Top Bar with Lens and Buttons */
-        .header {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(220, 10, 45, 0.1);
+        /* Top Plastic Area (Lens) */
+        .top-plastic {
+            margin-bottom: 15px;
         }
 
         .lens {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             background: radial-gradient(circle, #fff, #00d4ff);
-            border: 3px solid #fff;
+            border: 4px solid #fff;
             border-radius: 50%;
-            box-shadow: 0 0 10px #00d4ff;
+            box-shadow: 0 0 10px #00d4ff, 2px 2px 5px rgba(0,0,0,0.5);
         }
 
-        .btn-group { display: flex; gap: 10px; }
-
-        .btn {
-            background: var(--dex-red);
-            color: #fff;
-            border: 3px solid #000;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 4px #8b0000;
-        }
-
-        .btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px #8b0000;
-        }
-
-        /* The Main Screen Area */
-        .screen {
+        /* THE ONE AND ONLY SCREEN */
+        .the-one-screen {
             flex-grow: 1;
-            margin: 10px;
             background-color: var(--screen-black);
-            border: 4px solid #333;
+            border: 6px solid #222;
             border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .viewport {
-            flex: 3;
-            display: flex;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* Hides the sliding pages */
         }
 
         .pages-wrapper {
             display: flex;
             height: 100%;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* The single "Page" that holds both Image and Text */
         .page {
             min-width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* BUG FIX: This keeps the Pokemon from going off-screen */
-        .page img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; /* Shrinks the image to fit without breaking layout */
-            image-rendering: pixelated;
-        }
-
-        /* Bottom Info Strip */
-        .info-bar {
-            flex: 1;
-            background: #000;
-            border-top: 4px solid #333;
-            padding: 15px;
-            color: var(--matrix-green);
-            font-size: 9px;
-            line-height: 1.8;
-            text-align: center;
-        }
-
-        .footer {
-            padding: 10px;
-            text-align: center;
-        }
-
-        .counter {
-            display: inline-block;
-            color: var(--matrix-green);
-            border: 2px solid var(--matrix-green);
-            padding: 5px 15px;
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="pokedex-frame">
-    <div class="header">
-        <div class="lens"></div>
-        <div class="btn-group">
-            <button class="btn" onclick="move(-1)">PREV</button>
-            <button class="btn" onclick="move(1)">NEXT</button>
-        </div>
-    </div>
-
-    <div class="screen">
-        <div class="viewport">
-            <div id="slider" class="pages-wrapper"></div>
-        </div>
-        
-        <div class="info-bar" id="info-panel">
-            INITIALIZING...
-        </div>
-    </div>
-
-    <div class="footer">
-        <div class="counter" id="dex-count">01 / 15</div>
-    </div>
-</div>
-
-<script>
-    const pokemon = [
-        "Aleo", "Alewo", "Aloe", "Bewo", "Firarmear", "Flamer", 
-        "Flear", "Flicket", "Foimer", "Gider", "Gimox", "Giper", 
-        "Groxim", "Hydropip", "jelico"
-    ];
-
-    const slider = document.getElementById('slider');
-    const counter = document.getElementById('dex-count');
-    const infoPanel = document.getElementById('info-panel');
-
-    pokemon.forEach((name, index) => {
-        const page = document.createElement('div');
-        page.className = 'page';
-        page.innerHTML = `<img src="assets/${name}.png" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">`;
-        slider.appendChild(page);
-    });
-
-    let pos = 0;
-
-    function updateDisplay() {
-        slider.style.transform = `translateX(-${pos * 100}%)`;
-        counter.innerText = `${String(pos + 1).padStart(2, '0')} / ${pokemon.length}`;
-        
-        infoPanel.innerHTML = `
-            IDENTIFIED: ${pokemon[pos].toUpperCase()}<br>
-            STATUS: (UNIVERSE: NULL)<br>
-            LOCATION: PICTURE ROCKS, AZ
-        `;
-    }
-
-    function move(dir) {
-        pos = (pos + dir + pokemon.length) % pokemon.length;
-        updateDisplay();
-    }
-
-    updateDisplay();
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dootley Dex</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --dex-red: #dc0a2d;
-            --dex-dark: #8b0000;
-            --screen-bg: #222; /* Darker screen for better contrast */
-        }
-
-        body { 
-            background-color: #111; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            font-family: 'Press Start 2P', cursive; 
-            overflow: hidden; 
-        }
-
-        /* The Main Pokedex Body (The Thick Red Border) */
-        .pokedex-body {
-            width: 92%;
-            max-width: 400px;
-            height: 90vh;
-            background-color: var(--dex-red);
-            border: 8px solid #000;
-            border-radius: 20px 20px 20px 60px;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            justify-content: space-evenly; /* Spreads image and text nicely */
+            align-items: center;
+            padding: 10px;
             box-sizing: border-box;
-            box-shadow: inset -10px -10px 0px var(--dex-dark);
-            position: relative;
         }
 
-        /* The Decorative Blue Light */
-        .camera-lens {
-            width: 45px;
-            height: 45px;
-            background: radial-gradient(circle, #fff, #00d4ff);
-            border: 4px solid white;
-            border-radius: 50%;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px #00d4ff;
+        .page img {
+            max-width: 90%;
+            max-height: 60%; /* Leaves room for text at the bottom */
+            object-fit: contain; 
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); /* Slight glow on the art */
         }
 
-        /* The Screen Viewport (Fixed Centering) */
-        .viewport { 
-            flex-grow: 1;
-            background-color: var(--screen-bg);
-            border: 6px solid #444;
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            position: relative;
+        .data-text {
+            color: var(--matrix-green);
+            font-size: 10px;
+            line-height: 1.8;
+            text-align: center;
+            text-shadow: 0 0 5px var(--matrix-green); /* CRT Glow effect */
         }
 
-        .pages-wrapper { 
-            display: flex; 
-            height: 100%; 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        
-        .page { 
-            min-width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; /* Keeps content vertically centered */
-            padding: 15px; 
-            box-sizing: border-box; 
-            color: #0f0; /* Retro Matrix Green */
-        }
-
-        .page img { 
-            max-width: 80%; 
-            max-height: 55%; /* Prevents image from pushing text off screen */
-            image-rendering: pixelated; 
-            margin-bottom: 20px;
-        }
-
-        .info-text { 
-            font-size: 10px; 
-            line-height: 1.6; 
-            text-align: center; 
-            text-transform: uppercase;
-        }
-
-        /* Physical-style Buttons */
-        .controls {
-            height: 120px;
+        /* Bottom Plastic Area (Physical Buttons) */
+        .bottom-plastic {
+            margin-top: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
+            padding: 0 5px;
         }
 
         .btn {
-            background: #333;
+            background: #222;
             color: #fff;
-            border: 4px solid #000;
-            padding: 15px;
-            cursor: pointer;
+            border: 3px solid #000;
             font-family: 'Press Start 2P', cursive;
             font-size: 12px;
-            border-radius: 8px;
-            box-shadow: 0 5px #000;
+            padding: 15px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 5px #000; /* Chunky 3D button look */
         }
 
         .btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px #000;
+            transform: translateY(4px);
+            box-shadow: 0 1px #000; /* Button presses down */
         }
 
         .counter {
-            font-size: 10px;
             color: #fff;
+            font-size: 12px;
             background: #000;
-            padding: 8px;
-            border-radius: 4px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 2px solid #333;
         }
     </style>
 </head>
 <body>
 
-<div class="pokedex-body">
-    <div class="camera-lens"></div>
-
-    <div class="viewport">
-        <div id="slider" class="pages-wrapper"></div>
+<div class="pokedex-shell">
+    
+    <div class="top-plastic">
+        <div class="lens"></div>
     </div>
 
-    <div class="controls">
-        <button class="btn" onclick="move(-1)">PREV</button>
-        <div class="counter" id="dex-count">01 / 15</div>
-        <button class="btn" onclick="move(1)">NEXT</button>
+    <div class="the-one-screen">
+        <div id="slider" class="pages-wrapper">
+            </div>
     </div>
+
+    <div class="bottom-plastic">
+        <button class="btn" onclick="move(-1)">&lt; PREV</button>
+        <div class="counter" id="dex-count">01/15</div>
+        <button class="btn" onclick="move(1)">NEXT &gt;</button>
+    </div>
+
 </div>
 
 <script>
@@ -364,174 +164,34 @@
     const slider = document.getElementById('slider');
     const counter = document.getElementById('dex-count');
 
+    // Build the single unified pages
     pokemon.forEach((name, index) => {
         const page = document.createElement('div');
         page.className = 'page';
         page.innerHTML = `
             <img src="assets/${name}.png" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">
-            <div class="info-text">
-                NO. ${String(index + 1).padStart(3, '0')}<br>
-                ${name}<br>
-                ---<br>
-                (UNIVERSE: NULL)
+            <div class="data-text">
+                FILE NO. ${String(index + 1).padStart(3, '0')}<br>
+                NAME: ${name.toUpperCase()}<br>
+                UNIVERSE: NULL
             </div>
         `;
         slider.appendChild(page);
     });
 
     let pos = 0;
+
     function updateDisplay() {
         slider.style.transform = `translateX(-${pos * 100}%)`;
-        counter.innerText = `${String(pos + 1).padStart(2, '0')} / ${pokemon.length}`;
+        counter.innerText = `${String(pos + 1).padStart(2, '0')}/${pokemon.length}`;
     }
 
     function move(dir) {
         pos = (pos + dir + pokemon.length) % pokemon.length;
         updateDisplay();
     }
-    updateDisplay();
-</script>
 
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dootley-Dex</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        body { 
-            background-color: #000; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            font-family: 'Press Start 2P', cursive; 
-            overflow: hidden; 
-        }
-
-        /* Full Screen Background Image */
-        .pokedex-frame { 
-            width: 100vw;
-            height: 100vh;
-            background-image: url('assets/pokedex.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            position: relative;
-        }
-
-        /* The Viewport: No background color, no borders */
-        .viewport { 
-            position: absolute;
-            top: 22%; /* Adjust this % to match your PNG's screen hole */
-            left: 10%; /* Adjust this % to match your PNG's screen hole */
-            width: 80%;
-            height: 40%;
-            overflow: hidden;
-            display: flex;
-        }
-
-        .pages-wrapper { display: flex; height: 100%; transition: transform 0.3s ease-out; }
-        
-        .page { 
-            min-width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 10px; 
-            box-sizing: border-box; 
-            color: #fff; /* Changed to white to stand out against dark backgrounds */
-            text-shadow: 2px 2px #000; /* Adds a shadow so text is readable on any image */
-        }
-
-        .page img { 
-            width: auto; 
-            max-height: 70%; 
-            image-rendering: pixelated; 
-            margin-bottom: 10px;
-        }
-
-        .info-text { font-size: 10px; line-height: 1.4; text-align: center; text-transform: uppercase; }
-
-        /* Navigation Buttons: Place these over your PNG's buttons */
-        .nav-overlay {
-            position: absolute;
-            bottom: 10%; 
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .invisible-btn { 
-            background: rgba(255, 255, 255, 0); /* Completely invisible */
-            width: 100px;
-            height: 80px;
-            cursor: pointer;
-        }
-
-        .counter {
-            position: absolute;
-            bottom: 25%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #0f0; 
-            font-size: 12px;
-            text-shadow: 2px 2px #000;
-        }
-    </style>
-</head>
-<body>
-
-<div class="pokedex-frame">
-    <div class="viewport">
-        <div id="slider" class="pages-wrapper"></div>
-    </div>
-
-    <div class="counter" id="dex-count">01 / 15</div>
-
-    <div class="nav-overlay">
-        <div class="invisible-btn" onclick="move(-1)"></div>
-        <div class="invisible-btn" onclick="move(1)"></div>
-    </div>
-</div>
-
-<script>
-         const pokemon = [
-        "Groxim", "Gimox", "Foimer", "Giper", "Gider", "Hydropip", 
-        "Flear", "Flamer", "Firarmear", "Bewo", "Flicket", "Aleo", 
-        "Aloe", "Alewo", "jelico"
-    ];
-
-    const slider = document.getElementById('slider');
-    const counter = document.getElementById('dex-count');
-
-    pokemon.forEach((name, index) => {
-        const page = document.createElement('div');
-        page.className = 'page';
-        page.innerHTML = `
-            <img src="assets/${name}.png" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=SCANNING...'">
-            <div class="info-text">
-                ${name}<br>
-                (UNIVERSE: NULL)
-            </div>
-        `;
-        slider.appendChild(page);
-    });
-
-    let pos = 0;
-    function updateDisplay() {
-        slider.style.transform = `translateX(-${pos * 100}%)`;
-        counter.innerText = `${String(pos + 1).padStart(2, '0')} / ${pokemon.length}`;
-    }
-
-    function move(dir) {
-        pos = (pos + dir + pokemon.length) % pokemon.length;
-        updateDisplay();
-    }
+    // Run once to set the first frame
     updateDisplay();
 </script>
 
