@@ -1,125 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dootley-Dex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --dex-red: #dc0a2d;
-            --dex-dark-red: #8b0000;
-            --screen-blue: #98cbff;
-            --button-blue: #0066cc;
-        }
-
-        body {
-            background-color: #222;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        /* The main Pokedex body */
-        .pokedex {
-            background-color: var(--dex-red);
-            width: 90%;
-            max-width: 350px;
-            border: 5px solid black;
-            border-radius: 10px 10px 10px 50px;
-            padding: 20px;
-            box-shadow: inset -10px -10px 0px var(--dex-dark-red);
-            position: relative;
-        }
-
-        /* The classic Big Blue Light */
-        .big-blue-light {
-            width: 50px;
-            height: 50px;
-            background: radial-gradient(circle, #fff, var(--button-blue));
-            border: 4px solid white;
-            border-radius: 50%;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* The Screen area */
-        .screen-border {
-            background-color: #dedede;
-            padding: 20px;
-            border-radius: 10px 10px 10px 30px;
-            border: 3px solid #333;
-        }
-
-        .main-screen {
-            background-color: var(--screen-blue);
-            height: 250px;
-            border: 3px solid #555;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        img {
-            width: 80%;
-            image-rendering: pixelated; /* Makes Fakemon art look retro */
-        }
-
-        .dex-info {
-            color: #333;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-top: 10px;
-        }
-
-        /* D-Pad and Buttons */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .d-pad {
-            width: 60px;
-            height: 60px;
-            background: #333;
-            clip-path: polygon(33% 0%, 66% 0%, 66% 33%, 100% 33%, 100% 66%, 66% 66%, 66% 100%, 33% 100%, 33% 66%, 0% 66%, 0% 33%, 33% 33%);
-        }
-
-        .green-button {
-            width: 40px;
-            height: 40px;
-            background: #51ae5f;
-            border-radius: 50%;
-            border: 3px solid #333;
-            box-shadow: 0 4px 0 #2d6135;
-        }
+        :root { --dex-red: #dc0a2d; --screen-bg: #98cbff; }
+        body { background-color: #1a1a1a; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Press Start 2P', cursive; overflow: hidden; }
+        .pokedex { width: 95%; max-width: 380px; background-color: var(--dex-red); border: 5px solid #333; border-radius: 10px 10px 10px 40px; padding: 20px; box-shadow: inset -8px -8px 0px #8b0000; }
+        .screen-frame { background-color: #dedede; padding: 15px; border-radius: 5px 5px 5px 25px; border: 4px solid #444; }
+        .viewport { background-color: var(--screen-bg); height: 300px; border: 3px solid #555; position: relative; overflow: hidden; }
+        .pages-wrapper { display: flex; height: 100%; transition: transform 0.3s ease-out; }
+        .page { min-width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; color: #222; }
+        .page img { width: 160px; height: 160px; margin-bottom: 10px; image-rendering: pixelated; }
+        .info-text { font-size: 8px; line-height: 1.6; text-align: center; text-transform: uppercase; }
+        .controls { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; }
+        .btn { background: #333; color: white; border: 2px solid #000; padding: 12px; cursor: pointer; font-family: 'Press Start 2P', cursive; font-size: 10px; border-radius: 5px; box-shadow: 0 4px #000; }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px #000; }
+        .counter { font-size: 8px; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="pokedex">
-        <div class="big-blue-light"></div>
-        
-        <div class="screen-border">
-            <div class="main-screen">
-                <img src="aquaflare.png" alt="Fakemon">
-                <div class="dex-info">
-                    NO. 001 <br>
-                    AQUAFLARE
-                </div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <div class="d-pad"></div>
-            <div class="green-button" onclick="location.reload()"></div>
+<div class="pokedex">
+    <div style="width: 35px; height: 35px; background: radial-gradient(circle, #fff, cyan); border: 3px solid white; border-radius: 50%; margin-bottom: 15px; box-shadow: 0 0 10px cyan;"></div>
+    
+    <div class="screen-frame">
+        <div class="viewport">
+            <div id="slider" class="pages-wrapper"></div>
         </div>
     </div>
+
+    <div class="controls">
+        <button class="btn" onclick="move(-1)">PREV</button>
+        <div class="counter" id="dex-count">01 / 15</div>
+        <button class="btn" onclick="move(1)">NEXT</button>
+    </div>
+</div>
+
+<script>
+    // FINAL LIST: Based on your GitHub assets folder
+    const pokemon = [
+        "Aleo", "Alewo", "Aloe", "Bewo", "Firarmear", "Flamer", 
+        "Flear", "Flicket", "Foimer", "Gider", "Gimox", "Giper", 
+        "Groxim", "Hydropip", "jelico"
+    ];
+
+    const slider = document.getElementById('slider');
+    const counter = document.getElementById('dex-count');
+
+    pokemon.forEach((name, index) => {
+        const page = document.createElement('div');
+        page.className = 'page';
+        
+        // Handle specific extensions from your list (Gimox ends in .pn)
+        let fileName = (name === "Gimox") ? "Gimox.pn" : name + ".png";
+
+        page.innerHTML = `
+            <img src="assets/${fileName}" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">
+            <div class="info-text">
+                NO. ${String(index + 1).padStart(3, '0')}<br>
+                ${name}<br>
+                ---<br>
+                AREA: MARANA REGION
+            </div>
+        `;
+        slider.appendChild(page);
+    });
+
+    let pos = 0;
+    function updateDisplay() {
+        slider.style.transform = `translateX(-${pos * 100}%)`;
+        counter.innerText = `${String(pos + 1).padStart(2, '0')} / ${pokemon.length}`;
+    }
+
+    function move(dir) {
+        pos = (pos + dir + pokemon.length) % pokemon.length;
+        updateDisplay();
+    }
+    updateDisplay();
+</script>
 
 </body>
 </html>
