@@ -3,209 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dootley-Dex Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --dex-red: #dc0a2d;
-            --screen-black: #0a0a0a;
-            --matrix-green: #00ff41;
-        }
-
-        body { 
-            background-color: #000; /* Fallback if image doesn't load */
-            background-image: url('assets/pokedex.png');
-            background-size: cover; /* Stretches the image to fill the screen */
-            background-position: center; /* Keeps the image centered */
-            background-repeat: no-repeat;
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            font-family: 'Press Start 2P', cursive; 
-            overflow: hidden; 
-        }
-
-        /* The Red Plastic Shell */
-        .pokedex-shell {
-            width: 95vw;
-            max-width: 420px;
-            height: 95vh;
-            background-color: var(--dex-red);
-            border: 8px solid #000;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            padding: 15px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset -5px -5px 15px rgba(0,0,0,0.5); /* Added a drop shadow so it pops off the background */
-        }
-
-        /* Top Plastic Area (Lens) */
-        .top-plastic {
-            margin-bottom: 15px;
-        }
-
-        .lens {
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle, #fff, #00d4ff);
-            border: 4px solid #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #00d4ff, 2px 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* THE ONE AND ONLY SCREEN */
-        .the-one-screen {
-            flex-grow: 1;
-            background-color: var(--screen-black);
-            border: 6px solid #222;
-            border-radius: 10px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-            position: relative;
-            overflow: hidden; /* Hides the sliding pages */
-        }
-
-        .pages-wrapper {
-            display: flex;
-            height: 100%;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* The single "Page" that holds both Image and Text */
-        .page {
-            min-width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly; /* Spreads image and text nicely */
-            align-items: center;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        .page img {
-            max-width: 90%;
-            max-height: 60%; /* Leaves room for text at the bottom */
-            object-fit: contain; 
-            image-rendering: pixelated;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); /* Slight glow on the art */
-        }
-
-        .data-text {
-            color: var(--matrix-green);
-            font-size: 10px;
-            line-height: 1.8;
-            text-align: center;
-            text-shadow: 0 0 5px var(--matrix-green); /* CRT Glow effect */
-        }
-
-        /* Bottom Plastic Area (Physical Buttons) */
-        .bottom-plastic {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5px;
-        }
-
-        .btn {
-            background: #222;
-            color: #fff;
-            border: 3px solid #000;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            padding: 15px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 5px #000; /* Chunky 3D button look */
-        }
-
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px #000; /* Button presses down */
-        }
-
-        .counter {
-            color: #fff;
-            font-size: 12px;
-            background: #000;
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 2px solid #333;
-        }
-    </style>
-</head>
-<body>
-
-<div class="pokedex-shell">
-    
-    <div class="top-plastic">
-        <div class="lens"></div>
-    </div>
-
-    <div class="the-one-screen">
-        <div id="slider" class="pages-wrapper">
-            </div>
-    </div>
-
-    <div class="bottom-plastic">
-        <button class="btn" onclick="move(-1)">&lt; PREV</button>
-        <div class="counter" id="dex-count">01/15</div>
-        <button class="btn" onclick="move(1)">NEXT &gt;</button>
-    </div>
-
-</div>
-
-<script>
-      const pokemon = [
-        "Groxim", "Gimox", "Foimer", "Giper", "Gider", "Hydropip", 
-        "Flear", "Flamer", "Firarmear", "Bewo", "Flicket", "Aleo", 
-        "Aloe", "Alewo", "jelico"
-    ];
-
-    const slider = document.getElementById('slider');
-    const counter = document.getElementById('dex-count');
-
-    // Build the single unified pages
-    pokemon.forEach((name, index) => {
-        const page = document.createElement('div');
-        page.className = 'page';
-        page.innerHTML = `
-            <img src="assets/${name}.png" alt="${name}" onerror="this.src='https://via.placeholder.com/150?text=DATA+MISSING'">
-            <div class="data-text">
-                FILE NO. ${String(index + 1).padStart(3, '0')}<br>
-                NAME: ${name.toUpperCase()}<br>
-                UNIVERSE: NULL
-            </div>
-        `;
-        slider.appendChild(page);
-    });
-
-    let pos = 0;
-
-    function updateDisplay() {
-        slider.style.transform = `translateX(-${pos * 100}%)`;
-        counter.innerText = `${String(pos + 1).padStart(2, '0')}/${pokemon.length}`;
-    }
-
-    function move(dir) {
-        pos = (pos + dir + pokemon.length) % pokemon.length;
-        updateDisplay();
-    }
-
-    // Run once to set the first frame
-    updateDisplay();
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dootley Dex </title>
+    <title>Dootley Dex</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -237,7 +35,7 @@
             flex-direction: column;
             box-sizing: border-box;
             padding: 15px;
-            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset -5px -5px 15px rgba(0,0,0,0.5);
         }
 
         /* Top Plastic Area (Lens) */
@@ -254,15 +52,19 @@
             box-shadow: 0 0 10px #00d4ff, 2px 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* THE ONE AND ONLY SCREEN */
+        /* THE ONE AND ONLY SCREEN - NOW WITH YOUR BACKGROUND IMAGE */
         .the-one-screen {
             flex-grow: 1;
-            background-color: var(--screen-black);
+            background-color: var(--screen-black); /* Fallback */
+            background-image: url('assets/pokedex.png');
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
             border: 6px solid #222;
             border-radius: 10px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
             position: relative;
-            overflow: hidden; /* Hides the sliding pages */
+            overflow: hidden; 
         }
 
         .pages-wrapper {
@@ -277,7 +79,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly; /* Spreads image and text nicely */
+            justify-content: space-evenly; 
             align-items: center;
             padding: 10px;
             box-sizing: border-box;
@@ -285,10 +87,10 @@
 
         .page img {
             max-width: 90%;
-            max-height: 60%; /* Leaves room for text at the bottom */
+            max-height: 60%; 
             object-fit: contain; 
             image-rendering: pixelated;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); /* Slight glow on the art */
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); 
         }
 
         .data-text {
@@ -296,7 +98,7 @@
             font-size: 10px;
             line-height: 1.8;
             text-align: center;
-            text-shadow: 0 0 5px var(--matrix-green); /* CRT Glow effect */
+            text-shadow: 2px 2px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000, 1px 1px 0px #000; /* Added black outline so text is readable over any image */
         }
 
         /* Bottom Plastic Area (Physical Buttons) */
@@ -317,12 +119,12 @@
             padding: 15px 10px;
             cursor: pointer;
             border-radius: 5px;
-            box-shadow: 0 5px #000; /* Chunky 3D button look */
+            box-shadow: 0 5px #000; 
         }
 
         .btn:active {
             transform: translateY(4px);
-            box-shadow: 0 1px #000; /* Button presses down */
+            box-shadow: 0 1px #000; 
         }
 
         .counter {
