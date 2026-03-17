@@ -3,38 +3,123 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        :root {
+            --dex-red: #dc0a2d;
+            --dex-dark-red: #8b0000;
+            --screen-blue: #98cbff;
+            --button-blue: #0066cc;
+        }
+
         body {
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a; /* Dark background to make colors pop */
-            color: white;
-            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
         }
-        .card {
-            border-radius: 20px;
+
+        /* The main Pokedex body */
+        .pokedex {
+            background-color: var(--dex-red);
+            width: 90%;
+            max-width: 350px;
+            border: 5px solid black;
+            border-radius: 10px 10px 10px 50px;
             padding: 20px;
-            border: 4px solid #444;
-            background: linear-gradient(145deg, #222, #333);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            box-shadow: inset -10px -10px 0px var(--dex-dark-red);
+            position: relative;
         }
-        .aquaflare-theme { border-color: #0077be; box-shadow: 0 0 20px #0077be; }
-        .voltice-theme { border-color: #f1c40f; box-shadow: 0 0 20px #f1c40f; }
-        
-        img { width: 100%; max-width: 300px; border-radius: 10px; }
-        .stats { margin-top: 20px; font-size: 1.2rem; }
-        .stat-bar { background: #444; height: 10px; border-radius: 5px; margin: 5px 0; }
-        .fill { height: 100%; border-radius: 5px; background: #00ff00; }
+
+        /* The classic Big Blue Light */
+        .big-blue-light {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #fff, var(--button-blue));
+            border: 4px solid white;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* The Screen area */
+        .screen-border {
+            background-color: #dedede;
+            padding: 20px;
+            border-radius: 10px 10px 10px 30px;
+            border: 3px solid #333;
+        }
+
+        .main-screen {
+            background-color: var(--screen-blue);
+            height: 250px;
+            border: 3px solid #555;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        img {
+            width: 80%;
+            image-rendering: pixelated; /* Makes Fakemon art look retro */
+        }
+
+        .dex-info {
+            color: #333;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* D-Pad and Buttons */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .d-pad {
+            width: 60px;
+            height: 60px;
+            background: #333;
+            clip-path: polygon(33% 0%, 66% 0%, 66% 33%, 100% 33%, 100% 66%, 66% 66%, 66% 100%, 33% 100%, 33% 66%, 0% 66%, 0% 33%, 33% 33%);
+        }
+
+        .green-button {
+            width: 40px;
+            height: 40px;
+            background: #51ae5f;
+            border-radius: 50%;
+            border: 3px solid #333;
+            box-shadow: 0 4px 0 #2d6135;
+        }
     </style>
 </head>
 <body>
-    <div class="card aquaflare-theme">
-        <h1>AQUAFLARE</h1>
-        <img src="aquaflare.png" alt="Aquaflare">
-        <div class="stats">
-            <p>HP: 85</p> <div class="stat-bar"><div class="fill" style="width: 85%;"></div></div>
-            <p>ATK: 110</p> <div class="stat-bar"><div class="fill" style="width: 110px;"></div></div>
+
+    <div class="pokedex">
+        <div class="big-blue-light"></div>
+        
+        <div class="screen-border">
+            <div class="main-screen">
+                <img src="aquaflare.png" alt="Fakemon">
+                <div class="dex-info">
+                    NO. 001 <br>
+                    AQUAFLARE
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="d-pad"></div>
+            <div class="green-button" onclick="location.reload()"></div>
         </div>
     </div>
+
 </body>
 </html>
